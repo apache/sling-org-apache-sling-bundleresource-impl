@@ -18,33 +18,55 @@
  */
 package org.apache.sling.bundleresource.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.util.Dictionary;
 
+import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Test;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 
+/**
+ * SLING-11649 - verify check for null BundleContext while registering bundle resources
+ */
 public class NoBundleContextTest {
 
-    Bundle getBundle() {
-        Bundle bundle = mock(Bundle.class);
-        when(bundle.getBundleContext()).thenReturn(null);
-
-        return bundle;
-    }
-
-    /**
-     * SLING-11649 - verify check for null BundleContext while registering bundle resources
-     */
     @Test(expected = IllegalStateException.class)
     public void verifyIllegalStateExceptionWhenNoBundleContextIsAvailable() throws IOException {
-        final Bundle bundle = getBundle();
+        final Bundle bundle = mock(Bundle.class);
+        when(bundle.getBundleContext()).thenReturn(null);
         final PathMapping path = new PathMapping("/libs/foo", null, null);
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
         provider.registerService();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void verifyNoIllegalStateExceptionWhenBundleContextIsAvailable() throws IOException {
+        final Bundle bundle = mock(Bundle.class);
+        final BundleContext bc = mock(BundleContext.class);
+        when(bundle.getBundleContext()).thenReturn(bc);
+        @SuppressWarnings("rawtypes")
+        final ServiceRegistration<ResourceProvider> svcReg = mock(ServiceRegistration.class);
+        @SuppressWarnings("rawtypes")
+        final ServiceReference<ResourceProvider> svcRef = mock(ServiceReference.class);
+        when(svcRef.getProperty(Constants.SERVICE_ID)).thenReturn(123L);
+        when(svcReg.getReference()).thenReturn(svcRef);
+
+        final PathMapping path = new PathMapping("/libs/foo", null, null);
+        final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
+        when(bc.registerService(eq(ResourceProvider.class), eq(provider), any(Dictionary.class))).thenReturn(svcReg);
+        assertEquals(123L, provider.registerService());
     }
 
 }
