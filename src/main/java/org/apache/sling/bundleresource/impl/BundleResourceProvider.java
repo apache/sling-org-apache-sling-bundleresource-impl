@@ -29,6 +29,7 @@ import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
@@ -66,7 +67,14 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
         props.put(ResourceProvider.PROPERTY_ROOT, this.root.getResourceRoot());
         props.put(PROP_BUNDLE,bundle.getBundleId());
 
-        serviceRegistration = bundle.getBundleContext().registerService(ResourceProvider.class, this, props);
+        // SLING-11649 - If this bundle is not in the {@link Bundle#STARTING}, {@link Bundle#ACTIVE},
+        // or {@link Bundle#STOPPING} states or this bundle is a fragment bundle, then this
+        // bundle will have a null {@code BundleContext}.
+        BundleContext bundleContext = bundle.getBundleContext();
+        if (bundleContext == null) {
+            throw new IllegalStateException("No BundleContext was found");
+        }
+        serviceRegistration = bundleContext.registerService(ResourceProvider.class, this, props);
         return (Long) serviceRegistration.getReference().getProperty(Constants.SERVICE_ID);
     }
 
