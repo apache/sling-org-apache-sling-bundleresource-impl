@@ -18,8 +18,8 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -34,9 +34,9 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.bundleresource.impl.url.ResourceURLStreamHandler;
 import org.apache.sling.bundleresource.impl.url.ResourceURLStreamHandlerFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 public class BundleResourceTest {
@@ -51,12 +51,12 @@ public class BundleResourceTest {
         return cache;
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         ResourceURLStreamHandlerFactory.init();
     }
 
-    @After
+    @AfterEach
     public void finish() {
         ResourceURLStreamHandler.reset();
     }
@@ -75,7 +75,8 @@ public class BundleResourceTest {
         when(cache.getEntry(path)).thenReturn(url);
     }
 
-    @Test public void testFileResource() throws MalformedURLException {
+    @Test
+    public void testFileResource() throws MalformedURLException {
         final BundleResourceCache cache = getBundleResourceCache();
         when(cache.getEntry("/libs/foo/test.json")).thenReturn(new URL("file:/libs/foo/test.json"));
         final BundleResource rsrc = new BundleResource(null, cache,

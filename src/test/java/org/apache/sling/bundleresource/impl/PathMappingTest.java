@@ -18,14 +18,16 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class PathMappingTest {
 
-    @Test public void testSimpleRoot() {
+    @Test
+    public void testSimpleRoot() {
         final PathMapping[] paths = PathMapping.getRoots("/libs/foo");
         assertEquals(1, paths.length);
         assertNull(paths[0].getEntryRoot());

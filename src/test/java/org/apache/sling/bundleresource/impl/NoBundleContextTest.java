@@ -18,9 +18,9 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Dictionary;
 
 import org.apache.sling.spi.resource.provider.ResourceProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -40,14 +40,17 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class NoBundleContextTest {
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void verifyIllegalStateExceptionWhenNoBundleContextIsAvailable() throws IOException {
         final Bundle bundle = mock(Bundle.class);
         when(bundle.getBundleContext()).thenReturn(null);
         final PathMapping path = new PathMapping("/libs/foo", null, null);
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        provider.registerService();
+        Exception exception = assertThrows(IllegalStateException.class, () -> {
+            provider.registerService();
+        });
+        assertTrue(exception.getMessage().contains("No BundleContext was found"));
     }
 
     @SuppressWarnings("unchecked")

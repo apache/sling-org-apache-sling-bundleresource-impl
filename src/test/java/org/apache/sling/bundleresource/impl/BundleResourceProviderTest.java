@@ -18,10 +18,7 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,8 +32,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.json.Json;
-import javax.json.stream.JsonGenerator;
+import jakarta.json.Json;
+import jakarta.json.stream.JsonGenerator;
 
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -44,9 +41,9 @@ import org.apache.sling.bundleresource.impl.url.ResourceURLStreamHandler;
 import org.apache.sling.bundleresource.impl.url.ResourceURLStreamHandlerFactory;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
 public class BundleResourceProviderTest {
@@ -106,12 +103,12 @@ public class BundleResourceProviderTest {
         assertEquals(content, getContent(rsrc));
     }
 
-    @Before
+    @BeforeEach
     public void setup() {
         ResourceURLStreamHandlerFactory.init();
     }
 
-    @After
+    @AfterEach
     public void finish() {
         ResourceURLStreamHandler.reset();
     }
@@ -164,7 +161,8 @@ public class BundleResourceProviderTest {
         assertEquals("HELLOWORLD", getContent(rsrc));
     }
 
-    @Test public void testTreeWithoutDeepJSON() throws IOException {
+    @Test
+    public void testTreeWithoutDeepJSON() throws IOException {
         testTreeWithoutDeepJSON("");
         testTreeWithoutDeepJSON("/SLING-INF");
     }
