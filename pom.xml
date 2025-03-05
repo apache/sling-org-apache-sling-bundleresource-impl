@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
     Licensed to the Apache Software Foundation (ASF) under one
     or more contributor license agreements.  See the NOTICE file
@@ -30,36 +30,20 @@
     <version>2.3.5-SNAPSHOT</version>
 
     <name>Apache Sling Bundle Resource Provider</name>
-    <description>
-        Provides a ResourceProvider implementation supporting bundle
-        based resources.
-    </description>
+    <description>Provides a ResourceProvider implementation supporting bundle
+        based resources.</description>
+
+    <scm>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</connection>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/apache/sling-org-apache-sling-bundleresource-impl.git</url>
+    </scm>
 
     <properties>
         <sling.java.version>11</sling.java.version>
         <project.build.outputTimestamp>2021-04-23T16:34:16Z</project.build.outputTimestamp>
     </properties>
-
-    <scm>
-        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</connection>
-        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</developerConnection>
-        <url>https://github.com/apache/sling-org-apache-sling-bundleresource-impl.git</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>
-                        org.apache.sling.bundleresource.impl
-                    </excludePackageNames>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -111,7 +95,7 @@
             <artifactId>org.osgi.annotation.bundle</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!--  This is only used for some constants, no runtime dependency -->
         <dependency>
             <groupId>org.apache.jackrabbit</groupId>
@@ -146,9 +130,21 @@
         <dependency>
             <groupId>org.apache.johnzon</groupId>
             <artifactId>johnzon-core</artifactId>
-            <classifier>jakarta</classifier>
             <version>1.2.14</version>
+            <classifier>jakarta</classifier>
             <scope>test</scope>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>org.apache.sling.bundleresource.impl</excludePackageNames>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

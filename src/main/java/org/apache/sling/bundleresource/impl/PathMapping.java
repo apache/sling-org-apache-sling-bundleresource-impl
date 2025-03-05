@@ -53,9 +53,7 @@ class PathMapping {
         return prefixList.toArray(new PathMapping[prefixList.size()]);
     }
 
-
-    static PathMapping create(final String configPath,
-            final String expandDirective) {
+    static PathMapping create(final String configPath, final String expandDirective) {
         String resourceRoot;
         String entryRoot;
         int prefixSep = configPath.indexOf(prefixSeparatorChar);
@@ -69,9 +67,7 @@ class PathMapping {
         return new PathMapping(resourceRoot, entryRoot, expandDirective);
     }
 
-    PathMapping(final String resourceRoot,
-            final String entryRoot,
-            final String expandDirective) {
+    PathMapping(final String resourceRoot, final String entryRoot, final String expandDirective) {
         this.resourceRoot = ensureNoTrailingSlash(resourceRoot);
         this.resourceRootPrefix = ensureTrailingSlash(resourceRoot);
         this.entryRoot = ensureLeadingSlash(ensureNoTrailingSlash(entryRoot));
@@ -84,8 +80,7 @@ class PathMapping {
     }
 
     boolean isChild(final String resourcePath) {
-        return resourcePath.startsWith(resourceRootPrefix)
-            || resourcePath.equals(resourceRoot);
+        return resourcePath.startsWith(resourceRootPrefix) || resourcePath.equals(resourceRoot);
     }
 
     String getEntryPath(final String resourcePath) {
@@ -103,12 +98,12 @@ class PathMapping {
     }
 
     String getResourcePath(final String entryPath) {
-        if ( entryRootPrefix == null ) {
+        if (entryRootPrefix == null) {
             return entryPath;
         }
-        if ( entryPath.startsWith(entryRootPrefix) ) {
+        if (entryPath.startsWith(entryRootPrefix)) {
             return resourceRootPrefix.concat(entryPath.substring(entryRootPrefix.length()));
-        } else if ( entryPath.equals(entryRoot)) {
+        } else if (entryPath.equals(entryRoot)) {
             return resourceRoot;
         }
         return null;

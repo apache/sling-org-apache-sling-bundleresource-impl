@@ -35,7 +35,7 @@ public class ResourceURLConnection extends URLConnection {
 
     @Override
     public void connect() throws IOException {
-        if ( contents == null ) {
+        if (contents == null) {
             throw new IOException("404");
         }
     }

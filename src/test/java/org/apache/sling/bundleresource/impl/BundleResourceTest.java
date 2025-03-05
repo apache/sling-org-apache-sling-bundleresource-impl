@@ -18,11 +18,6 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +33,11 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class BundleResourceTest {
 
@@ -79,19 +79,20 @@ public class BundleResourceTest {
     public void testFileResource() throws MalformedURLException {
         final BundleResourceCache cache = getBundleResourceCache();
         when(cache.getEntry("/libs/foo/test.json")).thenReturn(new URL("file:/libs/foo/test.json"));
-        final BundleResource rsrc = new BundleResource(null, cache,
-                new PathMapping("/libs/foo", null, null), "/libs/foo/test.json", null, false);
+        final BundleResource rsrc = new BundleResource(
+                null, cache, new PathMapping("/libs/foo", null, null), "/libs/foo/test.json", null, false);
         assertEquals(JcrConstants.NT_FILE, rsrc.getResourceType());
         assertNull(rsrc.getResourceSuperType());
         final ValueMap vm = rsrc.getValueMap();
         assertEquals(JcrConstants.NT_FILE, vm.get(ResourceResolver.PROPERTY_RESOURCE_TYPE, String.class));
     }
 
-    @Test public void testJSONResource() throws IOException {
+    @Test
+    public void testJSONResource() throws IOException {
         final BundleResourceCache cache = getBundleResourceCache();
-        addContent(cache, "/libs/foo/test.json", Collections.singletonMap("test", (Object)"foo"));
-        final BundleResource rsrc = new BundleResource(null, cache,
-                new PathMapping("/libs/foo", null, "json"), "/libs/foo/test", null, false);
+        addContent(cache, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
+        final BundleResource rsrc = new BundleResource(
+                null, cache, new PathMapping("/libs/foo", null, "json"), "/libs/foo/test", null, false);
         assertEquals(JcrConstants.NT_FILE, rsrc.getResourceType());
         assertNull(rsrc.getResourceSuperType());
         final ValueMap vm = rsrc.getValueMap();
@@ -103,12 +104,18 @@ public class BundleResourceTest {
      * SLING-10140 - Verify that when the resourceRoot is a mapped file, that the sibling entry with the
      *  JSONPropertiesExtension is loaded
      */
-    @Test public void testJSONResourceForMappedFile() throws IOException {
+    @Test
+    public void testJSONResourceForMappedFile() throws IOException {
         final BundleResourceCache cache = getBundleResourceCache();
         addContent(cache, "/SLING_INF/libs/foo/test.txt", "Hello Text");
-        addContent(cache, "/SLING-INF/libs/foo/test.txt.json", Collections.singletonMap("test", (Object)"foo"));
-        final BundleResource rsrc = new BundleResource(null, cache,
-                new PathMapping("/libs/foo/test.txt", "/SLING-INF/libs/foo/test.txt", "json"), "/libs/foo/test.txt", null, false);
+        addContent(cache, "/SLING-INF/libs/foo/test.txt.json", Collections.singletonMap("test", (Object) "foo"));
+        final BundleResource rsrc = new BundleResource(
+                null,
+                cache,
+                new PathMapping("/libs/foo/test.txt", "/SLING-INF/libs/foo/test.txt", "json"),
+                "/libs/foo/test.txt",
+                null,
+                false);
         assertEquals(JcrConstants.NT_FILE, rsrc.getResourceType());
         assertNull(rsrc.getResourceSuperType());
         final ValueMap vm = rsrc.getValueMap();

@@ -18,12 +18,6 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.Dictionary;
 
@@ -34,6 +28,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * SLING-11649 - verify check for null BundleContext while registering bundle resources
@@ -68,8 +68,8 @@ public class NoBundleContextTest {
 
         final PathMapping path = new PathMapping("/libs/foo", null, null);
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        when(bc.registerService(eq(ResourceProvider.class), eq(provider), any(Dictionary.class))).thenReturn(svcReg);
+        when(bc.registerService(eq(ResourceProvider.class), eq(provider), any(Dictionary.class)))
+                .thenReturn(svcReg);
         assertEquals(123L, provider.registerService());
     }
-
 }

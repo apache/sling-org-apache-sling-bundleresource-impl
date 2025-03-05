@@ -18,7 +18,6 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,7 +36,8 @@ public class PathMappingTest {
         assertNull(paths[0].getJSONPropertiesExtension());
     }
 
-    @Test public void testSimpleRootWithJSON() {
+    @Test
+    public void testSimpleRootWithJSON() {
         final PathMapping[] paths = PathMapping.getRoots("/libs/foo;" + PathMapping.DIR_JSON + ":=json");
         assertEquals(1, paths.length);
         assertNull(paths[0].getEntryRoot());

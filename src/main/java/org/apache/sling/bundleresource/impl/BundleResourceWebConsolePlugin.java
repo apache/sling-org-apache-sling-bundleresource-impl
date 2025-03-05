@@ -18,18 +18,18 @@
  */
 package org.apache.sling.bundleresource.impl;
 
+import javax.servlet.Servlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.List;
-
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.Bundle;
@@ -52,7 +52,7 @@ class BundleResourceWebConsolePlugin extends HttpServlet {
 
     private final List<BundleResourceProvider> provider = new ArrayList<>();
 
-    //--------- setup and shutdown
+    // --------- setup and shutdown
 
     private static BundleResourceWebConsolePlugin INSTANCE;
 
@@ -75,12 +75,11 @@ class BundleResourceWebConsolePlugin extends HttpServlet {
     }
 
     // private constructor to force using static setup and shutdown
-    private BundleResourceWebConsolePlugin() {
-    }
+    private BundleResourceWebConsolePlugin() {}
 
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse res)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         PrintWriter pw = res.getWriter();
 
         pw.println("<table class='content' cellpadding='0' cellspacing='0' width='100%'>");
@@ -127,14 +126,12 @@ class BundleResourceWebConsolePlugin extends HttpServlet {
 
             pw.println("<tr>");
             pw.println("<td>Entry Cache</td>");
-            pw.printf("<td>Size: %d, Limit: %d</td>%n",
-                cache.getEntryCacheSize(), cache.getEntryCacheMaxSize());
+            pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getEntryCacheSize(), cache.getEntryCacheMaxSize());
             pw.println("</tr>");
 
             pw.println("<tr>");
             pw.println("<td>List Cache</td>");
-            pw.printf("<td>Size: %d, Limit: %d</td>%n",
-                cache.getListCacheSize(), cache.getListCacheMaxSize());
+            pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getListCacheSize(), cache.getListCacheMaxSize());
             pw.println("</tr>");
 
             pw.println("</table>");
@@ -144,47 +141,45 @@ class BundleResourceWebConsolePlugin extends HttpServlet {
         }
 
         pw.println("</table>");
-
     }
 
     @SuppressWarnings("rawtypes")
     public void activate(BundleContext context) {
-        providerTracker = new ServiceTracker<ResourceProvider, ResourceProvider>(context,
-            ResourceProvider.class.getName(), null) {
+        providerTracker =
+                new ServiceTracker<ResourceProvider, ResourceProvider>(
+                        context, ResourceProvider.class.getName(), null) {
 
-            @Override
-            public ResourceProvider addingService(final ServiceReference<ResourceProvider> reference) {
-                ResourceProvider service = null;
-                if ( reference.getProperty(BundleResourceProvider.PROP_BUNDLE) != null ) {
-                    service = super.addingService(reference);
-                    if (service instanceof BundleResourceProvider) {
-                        provider.add((BundleResourceProvider) service);
+                    @Override
+                    public ResourceProvider addingService(final ServiceReference<ResourceProvider> reference) {
+                        ResourceProvider service = null;
+                        if (reference.getProperty(BundleResourceProvider.PROP_BUNDLE) != null) {
+                            service = super.addingService(reference);
+                            if (service instanceof BundleResourceProvider) {
+                                provider.add((BundleResourceProvider) service);
+                            }
+                        }
+                        return service;
                     }
-                }
-                return service;
-            }
 
-            @Override
-            public void removedService(final ServiceReference<ResourceProvider> reference,
-                    final ResourceProvider service) {
-                if (service instanceof BundleResourceProvider) {
-                    provider.remove(service);
-                }
-                super.removedService(reference, service);
-            }
-        };
+                    @Override
+                    public void removedService(
+                            final ServiceReference<ResourceProvider> reference, final ResourceProvider service) {
+                        if (service instanceof BundleResourceProvider) {
+                            provider.remove(service);
+                        }
+                        super.removedService(reference, service);
+                    }
+                };
         providerTracker.open();
 
         Dictionary<String, Object> props = new Hashtable<>();
-        props.put(Constants.SERVICE_DESCRIPTION,
-            "Web Console Plugin for Bundle Resource Providers");
+        props.put(Constants.SERVICE_DESCRIPTION, "Web Console Plugin for Bundle Resource Providers");
         props.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
         props.put("felix.webconsole.label", LABEL);
         props.put("felix.webconsole.title", "Bundle Resource Provider");
         props.put("felix.webconsole.category", "Sling");
 
-        serviceRegistration = context.registerService(
-            Servlet.class, this, props);
+        serviceRegistration = context.registerService(Servlet.class, this, props);
     }
 
     public void deactivate() {

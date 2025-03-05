@@ -56,16 +56,17 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
         this.root = root;
     }
 
-    //---------- Service Registration
+    // ---------- Service Registration
 
     long registerService() {
         final Bundle bundle = this.cache.getBundle();
         final Dictionary<String, Object> props = new Hashtable<>();
-        props.put(Constants.SERVICE_DESCRIPTION,
-            "Provider of bundle based resources from bundle " + String.valueOf(bundle.getBundleId()));
+        props.put(
+                Constants.SERVICE_DESCRIPTION,
+                "Provider of bundle based resources from bundle " + String.valueOf(bundle.getBundleId()));
         props.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
         props.put(ResourceProvider.PROPERTY_ROOT, this.root.getResourceRoot());
-        props.put(PROP_BUNDLE,bundle.getBundleId());
+        props.put(PROP_BUNDLE, bundle.getBundleId());
 
         // SLING-11649 - If this bundle is not in the {@link Bundle#STARTING}, {@link Bundle#ACTIVE},
         // or {@link Bundle#STOPPING} states or this bundle is a fragment bundle, then this
@@ -82,7 +83,7 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
         if (serviceRegistration != null) {
             try {
                 serviceRegistration.unregister();
-            } catch ( final IllegalStateException ise ) {
+            } catch (final IllegalStateException ise) {
                 // this might happen on shutdown, so ignore
             }
             serviceRegistration = null;
@@ -96,7 +97,8 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
      * bundle of this provider.
      */
     @Override
-    public Resource getResource(final ResolveContext<Object> ctx,
+    public Resource getResource(
+            final ResolveContext<Object> ctx,
             final String resourcePath,
             final ResourceContext resourceContext,
             final Resource parent) {
@@ -116,7 +118,7 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
             // which would then of course be a file
             if (entry == null) {
                 entry = cache.getEntry(entryPath);
-                if ( entry == null && this.root.getJSONPropertiesExtension() != null ) {
+                if (entry == null && this.root.getJSONPropertiesExtension() != null) {
                     entry = cache.getEntry(entryPath + this.root.getJSONPropertiesExtension());
                 }
             }
@@ -126,32 +128,29 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
             if (entry != null) {
                 // check if a JSON props file is directly requested
                 // if so, we deny the access
-                if ( this.root.getJSONPropertiesExtension() == null
-                     || !entryPath.endsWith(this.root.getJSONPropertiesExtension()) ) {
+                if (this.root.getJSONPropertiesExtension() == null
+                        || !entryPath.endsWith(this.root.getJSONPropertiesExtension())) {
 
-                    return new BundleResource(ctx.getResourceResolver(),
-                            cache,
-                            mappedPath,
-                            resourcePath,
-                            null,
-                            isFolder);
+                    return new BundleResource(
+                            ctx.getResourceResolver(), cache, mappedPath, resourcePath, null, isFolder);
                 }
             }
 
             // the bundle does not contain the path
             // if JSON is enabled check for any parent
-            if ( this.root.getJSONPropertiesExtension() != null ) {
+            if (this.root.getJSONPropertiesExtension() != null) {
                 String parentPath = ResourceUtil.getParent(resourcePath);
-                while ( parentPath != null ) {
+                while (parentPath != null) {
                     final Resource rsrc = getResource(ctx, parentPath, resourceContext, null);
-                    if (rsrc != null ) {
-                        final Resource childResource = ((BundleResource)rsrc).getChildResource(resourcePath.substring(parentPath.length() + 1));
-                        if ( childResource != null ) {
+                    if (rsrc != null) {
+                        final Resource childResource = ((BundleResource) rsrc)
+                                .getChildResource(resourcePath.substring(parentPath.length() + 1));
+                        if (childResource != null) {
                             return childResource;
                         }
                     }
                     parentPath = ResourceUtil.getParent(parentPath);
-                    if ( parentPath != null && this.getMappedPath(parentPath) == null ) {
+                    if (parentPath != null && this.getMappedPath(parentPath) == null) {
                         parentPath = null;
                     }
                 }
@@ -163,18 +162,17 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
 
     @Override
     public Iterator<Resource> listChildren(final ResolveContext<Object> ctx, final Resource parent) {
-     	if (parent instanceof BundleResource && ((BundleResource)parent).getBundle() == this.cache) {
+        if (parent instanceof BundleResource && ((BundleResource) parent).getBundle() == this.cache) {
             // bundle resources can handle this request directly when the parent
-    		// resource is in the same bundle as this provider.
+            // resource is in the same bundle as this provider.
             return new BundleResourceIterator((BundleResource) parent);
-      	}
+        }
 
         // ensure this provider may have children of the parent
         String parentPath = parent.getPath();
         PathMapping mappedPath = getMappedPath(parentPath);
         if (mappedPath != null) {
-            return new BundleResourceIterator(parent.getResourceResolver(),
-                cache, mappedPath, parentPath, null);
+            return new BundleResourceIterator(parent.getResourceResolver(), cache, mappedPath, parentPath, null);
         }
 
         // the parent resource cannot have children in this provider,

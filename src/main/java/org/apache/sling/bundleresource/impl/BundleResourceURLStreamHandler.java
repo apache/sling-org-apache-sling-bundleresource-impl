@@ -30,7 +30,7 @@ class BundleResourceURLStreamHandler extends URLStreamHandler {
     static final String PROTOCOL = "bundle";
 
     private final Bundle bundle;
-    
+
     private final String bundlePath;
 
     BundleResourceURLStreamHandler(Bundle bundle, String bundlePath) {
@@ -41,11 +41,9 @@ class BundleResourceURLStreamHandler extends URLStreamHandler {
     @Override
     protected URLConnection openConnection(URL u) throws IOException {
         if (!PROTOCOL.equals(u.getProtocol())) {
-            throw new IOException("Cannot open connection to " + u
-                + ", wrong protocol");
+            throw new IOException("Cannot open connection to " + u + ", wrong protocol");
         }
 
         return new BundleResourceURLConnection(bundle, bundlePath, u);
     }
-
 }

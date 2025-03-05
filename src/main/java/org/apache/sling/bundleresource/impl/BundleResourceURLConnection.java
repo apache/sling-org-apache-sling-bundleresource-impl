@@ -37,7 +37,7 @@ public class BundleResourceURLConnection extends URLConnection {
     private final Bundle bundle;
 
     private final String bundlePath;
-    
+
     /** The original URLConnection */
     private URLConnection delegatee;
 
@@ -56,8 +56,7 @@ public class BundleResourceURLConnection extends URLConnection {
         if (!connected) {
             URL url = bundle.getEntry(bundlePath);
             if (url == null) {
-                throw new IOException("Cannot find entry " + bundlePath
-                    + " in bundle " + bundle + " for URL " + url);
+                throw new IOException("Cannot find entry " + bundlePath + " in bundle " + bundle + " for URL " + url);
             }
 
             delegatee = url.openConnection();
@@ -108,5 +107,4 @@ public class BundleResourceURLConnection extends URLConnection {
 
         return delegatee.getContentType();
     }
-
 }

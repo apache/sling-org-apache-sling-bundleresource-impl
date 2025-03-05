@@ -1,23 +1,22 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package org.apache.sling.bundleresource.impl;
-
-import static org.apache.jackrabbit.JcrConstants.NT_FILE;
-import static org.apache.jackrabbit.JcrConstants.NT_FOLDER;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,7 +34,6 @@ import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
-
 import org.apache.sling.api.resource.AbstractResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
@@ -44,6 +42,9 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.jackrabbit.JcrConstants.NT_FILE;
+import static org.apache.jackrabbit.JcrConstants.NT_FOLDER;
 
 /** A Resource that wraps a Bundle entry */
 public class BundleResource extends AbstractResource {
@@ -68,7 +69,8 @@ public class BundleResource extends AbstractResource {
     private final Map<String, Map<String, Object>> subResources;
 
     @SuppressWarnings("unchecked")
-    public BundleResource(final ResourceResolver resourceResolver,
+    public BundleResource(
+            final ResourceResolver resourceResolver,
             final BundleResourceCache cache,
             final PathMapping mappedPath,
             final String resourcePath,
@@ -98,7 +100,7 @@ public class BundleResource extends AbstractResource {
 
             try {
                 final URL url = this.cache.getEntry(mappedPath.getEntryPath(resourcePath));
-                if ( url != null ) {
+                if (url != null) {
                     metadata.setContentLength(url.openConnection().getContentLength());
                 }
             } catch (final Exception e) {
@@ -107,20 +109,21 @@ public class BundleResource extends AbstractResource {
         }
 
         Map<String, Map<String, Object>> children = null;
-        if ( readProps != null ) {
-            for(final Map.Entry<String, Object> entry : readProps.entrySet()) {
-                if ( entry.getValue() instanceof Map ) {
-                    if ( children == null ) {
+        if (readProps != null) {
+            for (final Map.Entry<String, Object> entry : readProps.entrySet()) {
+                if (entry.getValue() instanceof Map) {
+                    if (children == null) {
                         children = new HashMap<>();
                     }
-                    children.put(entry.getKey(), (Map<String, Object>)entry.getValue());
+                    children.put(entry.getKey(), (Map<String, Object>) entry.getValue());
                 } else {
                     properties.put(entry.getKey(), entry.getValue());
                 }
             }
         }
-        if ( this.mappedPath.getJSONPropertiesExtension() != null ) {
-            String propsPath = mappedPath.getEntryPath(resourcePath.concat(this.mappedPath.getJSONPropertiesExtension()));
+        if (this.mappedPath.getJSONPropertiesExtension() != null) {
+            String propsPath =
+                    mappedPath.getEntryPath(resourcePath.concat(this.mappedPath.getJSONPropertiesExtension()));
             if (propsPath == null && resourcePath.equals(mappedPath.getResourceRoot())) {
                 // SLING-10140 - Handle the special case when the resourceRoot points to a file.
                 //   In that case, the JSONProperties sibling entry may still exist
@@ -133,20 +136,21 @@ public class BundleResource extends AbstractResource {
                     propsPath = entryPath.concat(this.mappedPath.getJSONPropertiesExtension());
                 }
             }
-            if ( propsPath != null ) {
+            if (propsPath != null) {
 
                 try {
                     final URL url = this.cache.getEntry(propsPath);
                     if (url != null) {
-                        final JsonObject obj = Json.createReader(url.openStream()).readObject();
-                        for(final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
+                        final JsonObject obj =
+                                Json.createReader(url.openStream()).readObject();
+                        for (final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
                             final Object value = getValue(entry.getValue(), true);
-                            if ( value != null ) {
-                                if ( value instanceof Map ) {
-                                    if ( children == null ) {
+                            if (value != null) {
+                                if (value instanceof Map) {
+                                    if (children == null) {
                                         children = new HashMap<>();
                                     }
-                                    children.put(entry.getKey(), (Map<String, Object>)value);
+                                    children.put(entry.getKey(), (Map<String, Object>) value);
                                 } else {
                                     properties.put(entry.getKey(), value);
                                 }
@@ -154,8 +158,7 @@ public class BundleResource extends AbstractResource {
                         }
                     }
                 } catch (final IOException ioe) {
-                    log.error(
-                            "getInputStream: Cannot get input stream for " + propsPath, ioe);
+                    log.error("getInputStream: Cannot get input stream for " + propsPath, ioe);
                 }
             }
         }
@@ -166,14 +169,19 @@ public class BundleResource extends AbstractResource {
         Resource result = null;
         Map<String, Map<String, Object>> resources = this.subResources;
         String subPath = null;
-        for(String segment : path.split("/")) {
-            if ( resources != null ) {
+        for (String segment : path.split("/")) {
+            if (resources != null) {
                 subPath = subPath == null ? segment : subPath.concat("/").concat(segment);
                 final Map<String, Object> props = resources.get(segment);
-                if ( props != null ) {
-                    result = new BundleResource(this.resourceResolver, this.cache, this.mappedPath,
-                            this.getPath().concat("/").concat(subPath), props, false);
-                    resources = ((BundleResource)result).subResources;
+                if (props != null) {
+                    result = new BundleResource(
+                            this.resourceResolver,
+                            this.cache,
+                            this.mappedPath,
+                            this.getPath().concat("/").concat(subPath),
+                            props,
+                            false);
+                    resources = ((BundleResource) result).subResources;
                 } else {
                     result = null;
                     break;
@@ -187,33 +195,40 @@ public class BundleResource extends AbstractResource {
     }
 
     private static Object getValue(final JsonValue value, final boolean topLevel) {
-        switch ( value.getValueType() ) {
-            // type NULL -> return null
-            case NULL : return null;
-            // type TRUE or FALSE -> return boolean
-            case FALSE : return false;
-            case TRUE : return true;
-            // type String -> return String
-            case STRING : return ((JsonString)value).getString();
-            // type Number -> return long or double
-            case NUMBER : final JsonNumber num = (JsonNumber)value;
-                          if (num.isIntegral()) {
-                               return num.longValue();
-                          }
-                          return num.doubleValue();
-            // type ARRAY -> return list and call this method for each value
-            case ARRAY : final List<Object> array = new ArrayList<>();
-                         for(final JsonValue x : ((JsonArray)value)) {
-                             array.add(getValue(x, false));
-                         }
-                         return array;
-            // type OBJECT -> return map
-            case OBJECT : final Map<String, Object> map = new HashMap<>();
-                          final JsonObject obj = (JsonObject)value;
-                          for(final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
-                              map.put(entry.getKey(), getValue(entry.getValue(), false));
-                          }
-                          return map;
+        switch (value.getValueType()) {
+                // type NULL -> return null
+            case NULL:
+                return null;
+                // type TRUE or FALSE -> return boolean
+            case FALSE:
+                return false;
+            case TRUE:
+                return true;
+                // type String -> return String
+            case STRING:
+                return ((JsonString) value).getString();
+                // type Number -> return long or double
+            case NUMBER:
+                final JsonNumber num = (JsonNumber) value;
+                if (num.isIntegral()) {
+                    return num.longValue();
+                }
+                return num.doubleValue();
+                // type ARRAY -> return list and call this method for each value
+            case ARRAY:
+                final List<Object> array = new ArrayList<>();
+                for (final JsonValue x : ((JsonArray) value)) {
+                    array.add(getValue(x, false));
+                }
+                return array;
+                // type OBJECT -> return map
+            case OBJECT:
+                final Map<String, Object> map = new HashMap<>();
+                final JsonObject obj = (JsonObject) value;
+                for (final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
+                    map.put(entry.getKey(), getValue(entry.getValue(), false));
+                }
+                return map;
         }
         return null;
     }
@@ -264,8 +279,7 @@ public class BundleResource extends AbstractResource {
 
     @Override
     public String toString() {
-        return getClass().getSimpleName() + ", type=" + getResourceType()
-                + ", path=" + getPath();
+        return getClass().getSimpleName() + ", type=" + getResourceType() + ", path=" + getPath();
     }
 
     // ---------- internal -----------------------------------------------------
@@ -283,8 +297,7 @@ public class BundleResource extends AbstractResource {
                     return url.openStream();
                 }
             } catch (IOException ioe) {
-                log.error(
-                        "getInputStream: Cannot get input stream for " + this, ioe);
+                log.error("getInputStream: Cannot get input stream for " + this, ioe);
             }
         }
 
@@ -295,11 +308,14 @@ public class BundleResource extends AbstractResource {
     private URL getURL() {
         if (resourceUrl == null) {
             final URL url = this.cache.getEntry(mappedPath.getEntryPath(this.path));
-            if ( url != null ) {
+            if (url != null) {
                 try {
-                    resourceUrl = new URL(BundleResourceURLStreamHandler.PROTOCOL, null,
-                            -1, path, new BundleResourceURLStreamHandler(
-                                    cache.getBundle(), mappedPath.getEntryPath(path)));
+                    resourceUrl = new URL(
+                            BundleResourceURLStreamHandler.PROTOCOL,
+                            null,
+                            -1,
+                            path,
+                            new BundleResourceURLStreamHandler(cache.getBundle(), mappedPath.getEntryPath(path)));
                 } catch (MalformedURLException mue) {
                     log.error("getURL: Cannot get URL for " + this, mue);
                 }

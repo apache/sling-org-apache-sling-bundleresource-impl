@@ -65,14 +65,16 @@ class BundleResourceIterator implements Iterator<Resource> {
      * Creates an instance using the given parent bundle resource.
      */
     BundleResourceIterator(final BundleResource parent) {
-        this(parent.getResourceResolver(),
+        this(
+                parent.getResourceResolver(),
                 parent.getBundle(),
                 parent.getMappedPath(),
                 parent.getPath(),
                 parent.getSubResources());
     }
 
-    BundleResourceIterator(final ResourceResolver resourceResolver,
+    BundleResourceIterator(
+            final ResourceResolver resourceResolver,
             final BundleResourceCache bundle,
             final PathMapping mappedPath,
             final String parentPath,
@@ -93,21 +95,26 @@ class BundleResourceIterator implements Iterator<Resource> {
 
     private Iterator<String> getFilteredEntries(final String parentEntryPath) {
         final Set<String> bundleEntries = new TreeSet<>(cache.getEntryPaths(parentEntryPath));
-        if ( this.mappedPath.getJSONPropertiesExtension() != null ) {
+        if (this.mappedPath.getJSONPropertiesExtension() != null) {
             final Set<String> add = new HashSet<>();
             final Iterator<String> iter = bundleEntries.iterator();
-            while ( iter.hasNext() ) {
+            while (iter.hasNext()) {
                 final String path = iter.next();
-                if ( path.endsWith(this.mappedPath.getJSONPropertiesExtension()) ) {
+                if (path.endsWith(this.mappedPath.getJSONPropertiesExtension())) {
                     iter.remove();
-                    add.add(path.substring(0, path.length() - this.mappedPath.getJSONPropertiesExtension().length()));
+                    add.add(path.substring(
+                            0,
+                            path.length()
+                                    - this.mappedPath
+                                            .getJSONPropertiesExtension()
+                                            .length()));
                 }
             }
             bundleEntries.addAll(add);
-            if ( subResources != null ) {
-                for(final String name : subResources.keySet()) {
+            if (subResources != null) {
+                for (final String name : subResources.keySet()) {
                     final String fullPath = parentEntryPath.concat(name);
-                    if ( !bundleEntries.contains(fullPath) ) {
+                    if (!bundleEntries.contains(fullPath)) {
                         bundleEntries.add(fullPath);
                     } else {
                         subResources.remove(name);
@@ -164,8 +171,11 @@ class BundleResourceIterator implements Iterator<Resource> {
             if (slash < 0 || slash == entry.length() - 1) {
                 log.debug("seek: Using entry {}", entry);
                 final boolean isFolder = entry.endsWith("/");
-                final String entryPath = isFolder ? entry.substring(0, entry.length()-1) : entry;
-                return new BundleResource(resourceResolver, cache, mappedPath,
+                final String entryPath = isFolder ? entry.substring(0, entry.length() - 1) : entry;
+                return new BundleResource(
+                        resourceResolver,
+                        cache,
+                        mappedPath,
                         mappedPath.getResourcePath(entryPath),
                         this.subResources != null ? this.subResources.get(ResourceUtil.getName(entryPath)) : null,
                         isFolder);

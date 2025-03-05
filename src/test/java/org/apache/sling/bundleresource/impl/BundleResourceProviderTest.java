@@ -18,10 +18,6 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -34,7 +30,6 @@ import java.util.Map;
 
 import jakarta.json.Json;
 import jakarta.json.stream.JsonGenerator;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.bundleresource.impl.url.ResourceURLStreamHandler;
@@ -46,6 +41,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.osgi.framework.Bundle;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 public class BundleResourceProviderTest {
 
     Bundle getBundle() {
@@ -55,7 +54,6 @@ public class BundleResourceProviderTest {
         return bundle;
     }
 
-
     void addContent(Bundle bundle, String path, Map<String, Object> content) throws IOException {
         final URL url = new URL("resource:" + path);
 
@@ -64,7 +62,8 @@ public class BundleResourceProviderTest {
     }
 
     void finishContent(Bundle bundle) {
-        for(final Map.Entry<String, List<String>> entry : ResourceURLStreamHandler.getParentChildRelationship().entrySet()) {
+        for (final Map.Entry<String, List<String>> entry :
+                ResourceURLStreamHandler.getParentChildRelationship().entrySet()) {
             when(bundle.getEntryPaths(entry.getKey())).thenReturn(Collections.enumeration(entry.getValue()));
         }
     }
@@ -78,7 +77,7 @@ public class BundleResourceProviderTest {
 
     String getContent(final Resource rsrc) throws IOException {
         final InputStream is = rsrc.adaptTo(InputStream.class);
-        if ( is == null ) {
+        if (is == null) {
             return null;
         }
         final byte[] buffer = new byte[20];
@@ -88,8 +87,8 @@ public class BundleResourceProviderTest {
 
     List<String> getChildren(final Iterator<Resource> i) {
         final List<String> list = new ArrayList<>();
-        if ( i != null ) {
-            while ( i.hasNext() ) {
+        if (i != null) {
+            while (i.hasNext()) {
                 list.add(i.next().getPath());
             }
         }
@@ -97,7 +96,8 @@ public class BundleResourceProviderTest {
     }
 
     @SuppressWarnings("unchecked")
-    void assertContent(final BundleResourceProvider provider, final String path, final String content) throws IOException {
+    void assertContent(final BundleResourceProvider provider, final String path, final String content)
+            throws IOException {
         final Resource rsrc = provider.getResource(mock(ResolveContext.class), path, mock(ResourceContext.class), null);
         assertNotNull(rsrc);
         assertEquals(content, getContent(rsrc));
@@ -114,27 +114,33 @@ public class BundleResourceProviderTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test public void testFileResource() throws IOException {
+    @Test
+    public void testFileResource() throws IOException {
         final Bundle bundle = getBundle();
         addContent(bundle, "/libs/foo/test.json", "HELLOWORLD");
 
         final PathMapping path = new PathMapping("/libs/foo", null, null);
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        assertNotNull(provider.getResource(mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
-        assertNull(provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null));
+        assertNotNull(provider.getResource(
+                mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
+        assertNull(
+                provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null));
     }
 
     @SuppressWarnings("unchecked")
-    @Test public void testJSONResource() throws IOException {
+    @Test
+    public void testJSONResource() throws IOException {
         final Bundle bundle = getBundle();
-        addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object)"foo"));
+        addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
 
         final PathMapping path = new PathMapping("/libs/foo", null, "json");
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        assertNull(provider.getResource(mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
-        final Resource rsrc = provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null);
+        assertNull(provider.getResource(
+                mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
+        final Resource rsrc =
+                provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null);
         assertNotNull(rsrc);
         assertNull(rsrc.adaptTo(InputStream.class));
         assertNull(rsrc.adaptTo(URL.class));
@@ -143,16 +149,19 @@ public class BundleResourceProviderTest {
     }
 
     @SuppressWarnings("unchecked")
-    @Test public void testFileAndJSONResource() throws IOException {
+    @Test
+    public void testFileAndJSONResource() throws IOException {
         final Bundle bundle = getBundle();
         addContent(bundle, "/libs/foo/test", "HELLOWORLD");
-        addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object)"foo"));
+        addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
 
         final PathMapping path = new PathMapping("/libs/foo", null, "json");
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        assertNull(provider.getResource(mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
-        final Resource rsrc = provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null);
+        assertNull(provider.getResource(
+                mock(ResolveContext.class), "/libs/foo/test.json", mock(ResourceContext.class), null));
+        final Resource rsrc =
+                provider.getResource(mock(ResolveContext.class), "/libs/foo/test", mock(ResourceContext.class), null);
         assertNotNull(rsrc);
         assertNotNull(rsrc.adaptTo(InputStream.class));
         assertNotNull(rsrc.adaptTo(URL.class));
@@ -176,13 +185,16 @@ public class BundleResourceProviderTest {
         addContent(bundle, prefix + "/libs/foo/test", "test");
         addContent(bundle, prefix + "/libs/foo/test/x", "X");
         addContent(bundle, prefix + "/libs/foo/test/y", "Y");
-        addContent(bundle, prefix + "/libs/foo/test/z.json", Collections.singletonMap(ResourceResolver.PROPERTY_RESOURCE_TYPE, (Object)"rtz"));
-        addContent(bundle, prefix + "/libs/foo/test.json", Collections.singletonMap("test", (Object)"foo"));
+        addContent(
+                bundle,
+                prefix + "/libs/foo/test/z.json",
+                Collections.singletonMap(ResourceResolver.PROPERTY_RESOURCE_TYPE, (Object) "rtz"));
+        addContent(bundle, prefix + "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
 
         finishContent(bundle);
 
         final PathMapping path;
-        if ( prefix.length() == 0 ) {
+        if (prefix.length() == 0) {
             path = new PathMapping("/libs/foo", null, "json");
         } else {
             path = new PathMapping("/libs/foo", prefix + "/libs/foo", "json");
@@ -197,7 +209,8 @@ public class BundleResourceProviderTest {
         assertContent(provider, "/libs/foo/test/y", "Y");
         assertContent(provider, "/libs/foo/test/z", null);
 
-        Resource rsrc = provider.getResource(mock(ResolveContext.class), "/libs/foo", mock(ResourceContext.class), null);
+        Resource rsrc =
+                provider.getResource(mock(ResolveContext.class), "/libs/foo", mock(ResourceContext.class), null);
         assertNotNull(rsrc);
 
         List<String> rsrcChildren = getChildren(provider.listChildren(mock(ResolveContext.class), rsrc));
@@ -216,7 +229,8 @@ public class BundleResourceProviderTest {
         assertTrue(rsrcChildren.contains("/libs/foo/test/z"));
     }
 
-    @Test public void testTreeWithDeepJSON() throws IOException {
+    @Test
+    public void testTreeWithDeepJSON() throws IOException {
         testTreeWithDeepJSON("");
         testTreeWithDeepJSON("/SLING-INF");
     }
@@ -269,13 +283,16 @@ public class BundleResourceProviderTest {
         addContent(bundle, prefix + "/libs/foo/test", "test");
         addContent(bundle, prefix + "/libs/foo/test/x", "X");
         addContent(bundle, prefix + "/libs/foo/test/y", "Y");
-        addContent(bundle, prefix + "/libs/foo/test/z.json", Collections.singletonMap(ResourceResolver.PROPERTY_RESOURCE_TYPE, (Object)"rtz"));
-        addContent(bundle, prefix + "/libs/foo/test.json", Collections.singletonMap("test", (Object)"foo"));
+        addContent(
+                bundle,
+                prefix + "/libs/foo/test/z.json",
+                Collections.singletonMap(ResourceResolver.PROPERTY_RESOURCE_TYPE, (Object) "rtz"));
+        addContent(bundle, prefix + "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
 
         finishContent(bundle);
 
         final PathMapping path;
-        if ( prefix.length() == 0 ) {
+        if (prefix.length() == 0) {
             path = new PathMapping("/libs/foo", null, "json");
         } else {
             path = new PathMapping("/libs/foo", prefix + "/libs/foo", "json");
@@ -290,7 +307,8 @@ public class BundleResourceProviderTest {
         assertContent(provider, "/libs/foo/test/y", "Y");
         assertContent(provider, "/libs/foo/test/z", null);
 
-        Resource rsrc = provider.getResource(mock(ResolveContext.class), "/libs/foo", mock(ResourceContext.class), null);
+        Resource rsrc =
+                provider.getResource(mock(ResolveContext.class), "/libs/foo", mock(ResourceContext.class), null);
         assertNotNull(rsrc);
 
         List<String> rsrcChildren = getChildren(provider.listChildren(mock(ResolveContext.class), rsrc));

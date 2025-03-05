@@ -32,7 +32,6 @@ import jakarta.json.Json;
 import jakarta.json.JsonArrayBuilder;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonStructure;
-
 import org.apache.sling.api.resource.ResourceUtil;
 
 public class ResourceURLStreamHandler extends URLStreamHandler {
@@ -45,14 +44,14 @@ public class ResourceURLStreamHandler extends URLStreamHandler {
         contents.put(path, c);
         final String parent = ResourceUtil.getParent(path).concat("/");
         List<String> children = parentChild.get(parent);
-        if ( children == null ) {
+        if (children == null) {
             children = new ArrayList<>();
             parentChild.put(parent, children);
         }
         children.add(path);
     }
 
-    public static  Map<String, List<String>> getParentChildRelationship() {
+    public static Map<String, List<String>> getParentChildRelationship() {
         return parentChild;
     }
 
@@ -67,7 +66,6 @@ public class ResourceURLStreamHandler extends URLStreamHandler {
         parentChild.clear();
     }
 
-
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
         final ResourceURLConnection conn = new ResourceURLConnection(url, contents.get(url.getPath()));
@@ -76,43 +74,42 @@ public class ResourceURLStreamHandler extends URLStreamHandler {
     }
 
     private static JsonStructure build(final Object value) {
-        if ( value instanceof List ) {
+        if (value instanceof List) {
             @SuppressWarnings("unchecked")
-            final List<Object> list = (List<Object>)value;
+            final List<Object> list = (List<Object>) value;
             final JsonArrayBuilder builder = Json.createArrayBuilder();
-            for(final Object obj : list) {
-                if ( obj instanceof String ) {
+            for (final Object obj : list) {
+                if (obj instanceof String) {
                     builder.add(obj.toString());
-                } else if ( obj instanceof Long ) {
-                    builder.add((Long)obj);
-                } else if ( obj instanceof Double ) {
-                    builder.add((Double)obj);
-                } else if (obj instanceof Boolean ) {
-                    builder.add((Boolean)obj);
-                } else if ( obj instanceof Map ) {
+                } else if (obj instanceof Long) {
+                    builder.add((Long) obj);
+                } else if (obj instanceof Double) {
+                    builder.add((Double) obj);
+                } else if (obj instanceof Boolean) {
+                    builder.add((Boolean) obj);
+                } else if (obj instanceof Map) {
                     builder.add(build(obj));
-                } else if ( obj instanceof List ) {
+                } else if (obj instanceof List) {
                     builder.add(build(obj));
                 }
-
             }
             return builder.build();
-        } else if ( value instanceof Map ) {
+        } else if (value instanceof Map) {
             @SuppressWarnings("unchecked")
-            final Map<String, Object> map = (Map<String, Object>)value;
+            final Map<String, Object> map = (Map<String, Object>) value;
             final JsonObjectBuilder builder = Json.createObjectBuilder();
-            for(final Map.Entry<String, Object> entry : map.entrySet()) {
-                if ( entry.getValue() instanceof String ) {
+            for (final Map.Entry<String, Object> entry : map.entrySet()) {
+                if (entry.getValue() instanceof String) {
                     builder.add(entry.getKey(), entry.getValue().toString());
-                } else if ( entry.getValue() instanceof Long ) {
-                    builder.add(entry.getKey(), (Long)entry.getValue());
-                } else if ( entry.getValue() instanceof Double ) {
-                    builder.add(entry.getKey(), (Double)entry.getValue());
-                } else if ( entry.getValue() instanceof Boolean ) {
-                    builder.add(entry.getKey(), (Boolean)entry.getValue());
-                } else if ( entry.getValue() instanceof Map ) {
+                } else if (entry.getValue() instanceof Long) {
+                    builder.add(entry.getKey(), (Long) entry.getValue());
+                } else if (entry.getValue() instanceof Double) {
+                    builder.add(entry.getKey(), (Double) entry.getValue());
+                } else if (entry.getValue() instanceof Boolean) {
+                    builder.add(entry.getKey(), (Boolean) entry.getValue());
+                } else if (entry.getValue() instanceof Map) {
                     builder.add(entry.getKey(), build(entry.getValue()));
-                } else if ( entry.getValue() instanceof List ) {
+                } else if (entry.getValue() instanceof List) {
                     builder.add(entry.getKey(), build(entry.getValue()));
                 }
             }
@@ -121,4 +118,3 @@ public class ResourceURLStreamHandler extends URLStreamHandler {
         return null;
     }
 }
-

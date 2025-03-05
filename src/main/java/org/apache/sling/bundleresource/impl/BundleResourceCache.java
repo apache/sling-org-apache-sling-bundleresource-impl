@@ -67,7 +67,7 @@ class BundleResourceCache {
      * a given path to prevent looking for non-existing bundle entries multiple
      * times (value is an empty list).
      */
-    private static final List<String> NOT_FOUND_CHILDREN = Collections.<String> emptyList();
+    private static final List<String> NOT_FOUND_CHILDREN = Collections.<String>emptyList();
 
     /**
      * Single entry cache. This is a synchronized map with a size limit.
@@ -106,10 +106,8 @@ class BundleResourceCache {
         this.bundle = bundle;
 
         // create the limited maps wrapping in synchronized maps
-        this.cache = Collections.synchronizedMap(new BundleResourceMap<String, URL>(
-            CACHE_SIZE));
-        this.listCache = Collections.synchronizedMap(new BundleResourceMap<String, List<String>>(
-            LIST_CACHE_SIZE));
+        this.cache = Collections.synchronizedMap(new BundleResourceMap<String, URL>(CACHE_SIZE));
+        this.listCache = Collections.synchronizedMap(new BundleResourceMap<String, List<String>>(LIST_CACHE_SIZE));
     }
 
     /**
@@ -227,8 +225,7 @@ class BundleResourceCache {
      * {@link #removeEldestEntry(Entry)} method to implement the size limit,
      * which is set in the constructor.
      */
-    private static class BundleResourceMap<K, V> extends
-            LinkedHashMap<String, V> {
+    private static class BundleResourceMap<K, V> extends LinkedHashMap<String, V> {
 
         private static final long serialVersionUID = 7455098291380945276L;
 
@@ -271,5 +268,4 @@ class BundleResourceCache {
             return size() > limit;
         }
     }
-
 }
