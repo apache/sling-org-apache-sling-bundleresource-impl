@@ -196,32 +196,32 @@ public class BundleResource extends AbstractResource {
 
     private static Object getValue(final JsonValue value, final boolean topLevel) {
         switch (value.getValueType()) {
-                // type NULL -> return null
+            // type NULL -> return null
             case NULL:
                 return null;
-                // type TRUE or FALSE -> return boolean
+            // type TRUE or FALSE -> return boolean
             case FALSE:
                 return false;
             case TRUE:
                 return true;
-                // type String -> return String
+            // type String -> return String
             case STRING:
                 return ((JsonString) value).getString();
-                // type Number -> return long or double
+            // type Number -> return long or double
             case NUMBER:
                 final JsonNumber num = (JsonNumber) value;
                 if (num.isIntegral()) {
                     return num.longValue();
                 }
                 return num.doubleValue();
-                // type ARRAY -> return list and call this method for each value
+            // type ARRAY -> return list and call this method for each value
             case ARRAY:
                 final List<Object> array = new ArrayList<>();
                 for (final JsonValue x : ((JsonArray) value)) {
                     array.add(getValue(x, false));
                 }
                 return array;
-                // type OBJECT -> return map
+            // type OBJECT -> return map
             case OBJECT:
                 final Map<String, Object> map = new HashMap<>();
                 final JsonObject obj = (JsonObject) value;
