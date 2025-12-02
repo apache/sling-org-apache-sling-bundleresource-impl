@@ -93,13 +93,16 @@ public class Activator implements BundleActivator, BundleListener {
      */
     @Override
     public void bundleChanged(final BundleEvent event) {
-        final int eventType = event.getType();
-        if (BundleEvent.STARTED == eventType) {
-            // register resource provider for the started bundle
-            addBundleResourceProvider(event.getBundle());
-        } else if (BundleEvent.STOPPED == eventType) {
-            // remove resource provider after the bundle has stopped
-            removeBundleResourceProvider(event.getBundle());
+        switch (event.getType()) {
+            case BundleEvent.STARTED:
+                // register resource provider for the started bundle
+                addBundleResourceProvider(event.getBundle());
+                break;
+
+            case BundleEvent.STOPPED:
+                // remove resource provider after the bundle has stopped
+                removeBundleResourceProvider(event.getBundle());
+                break;
         }
     }
 
@@ -117,10 +120,8 @@ public class Activator implements BundleActivator, BundleListener {
                 if (prefixes != null) {
                     log.debug(
                             "addBundleResourceProvider: Registering resources '{}' for bundle {}:{} ({}) as service ",
-                            prefixes,
-                            bundle.getSymbolicName(),
-                            bundle.getVersion(),
-                            bundle.getBundleId());
+                            new Object[] {prefixes, bundle.getSymbolicName(), bundle.getVersion(), bundle.getBundleId()
+                            });
 
                     final PathMapping[] roots = PathMapping.getRoots(prefixes);
                     providers = new BundleResourceProvider[roots.length];
@@ -158,9 +159,7 @@ public class Activator implements BundleActivator, BundleListener {
         if (brp != null) {
             log.debug(
                     "removeBundleResourceProvider: Unregistering resources for bundle {}:{} ({})",
-                    bundle.getSymbolicName(),
-                    bundle.getVersion(),
-                    bundle.getBundleId());
+                    new Object[] {bundle.getSymbolicName(), bundle.getVersion(), bundle.getBundleId()});
             for (final BundleResourceProvider provider : brp) {
                 try {
                     provider.unregisterService();
