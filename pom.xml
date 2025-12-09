@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>63</version>
+        <version>64</version>
         <relativePath />
     </parent>
 
@@ -126,32 +126,6 @@
 
     <build>
         <plugins>
-            <!-- Temporary debug logging to diagnose build failure in CI-->
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <phase>validate</phase>
-                        <configuration>
-                            <target>
-                                <echo message="--------- For Diagnostics Only ---------" />
-                                <echo message="java.vm.name = ${java.vm.name}" />
-                                <echo message="java.vm.specification.name = ${java.vm.specification.name}" />
-                                <echo message="java.vm.specification.vendor = ${java.vm.specification.vendor}" />
-                                <echo message="java.vm.specification.version = ${java.vm.specification.version}" />
-                                <echo message="java.vm.vendor = ${java.vm.vendor}" />
-                                <echo message="java.vm.version = ${java.vm.version}" />
-                                <echo message="java.vm.name = ${java.vm.name}" />
-                                <echo message="----------------------------------------" />
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
