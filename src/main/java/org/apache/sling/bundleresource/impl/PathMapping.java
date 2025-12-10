@@ -28,7 +28,7 @@ class PathMapping {
     public static final String DIR_PATH = "path";
     public static final String DIR_JSON = "propsJSON";
 
-    private static final char prefixSeparatorChar = '!';
+    private static final char PREFIX_SEPARATOR_CHAR = '!';
     private final String resourceRoot;
     private final String resourceRootPrefix;
     private final String entryRoot;
@@ -56,7 +56,7 @@ class PathMapping {
     static PathMapping create(final String configPath, final String expandDirective) {
         String resourceRoot;
         String entryRoot;
-        int prefixSep = configPath.indexOf(prefixSeparatorChar);
+        int prefixSep = configPath.indexOf(PREFIX_SEPARATOR_CHAR);
         if (prefixSep >= 0) {
             entryRoot = configPath.substring(prefixSep + 1);
             resourceRoot = configPath.substring(0, prefixSep).concat(entryRoot);
@@ -126,7 +126,7 @@ class PathMapping {
     }
 
     private static String ensureLeadingDot(final String path) {
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
 
@@ -138,7 +138,7 @@ class PathMapping {
     }
 
     private static String ensureNoTrailingSlash(final String path) {
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
 
@@ -150,7 +150,7 @@ class PathMapping {
     }
 
     private static String ensureTrailingSlash(final String path) {
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
 
@@ -162,7 +162,7 @@ class PathMapping {
     }
 
     private static String ensureLeadingSlash(final String path) {
-        if (path == null || path.length() == 0) {
+        if (path == null || path.isEmpty()) {
             return null;
         }
 

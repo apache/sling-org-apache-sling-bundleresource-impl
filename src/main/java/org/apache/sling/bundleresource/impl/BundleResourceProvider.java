@@ -44,7 +44,7 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
     private final PathMapping root;
 
     @SuppressWarnings("rawtypes")
-    private volatile ServiceRegistration<ResourceProvider> serviceRegistration;
+    private ServiceRegistration<ResourceProvider> serviceRegistration;
 
     /**
      * Creates Bundle resource provider accessing entries in the given Bundle an
@@ -60,10 +60,10 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
 
     long registerService() {
         final Bundle bundle = this.cache.getBundle();
-        final Dictionary<String, Object> props = new Hashtable<>();
+        final Dictionary<String, Object> props = new Hashtable<>(); // NOSONAR
         props.put(
                 Constants.SERVICE_DESCRIPTION,
-                "Provider of bundle based resources from bundle " + String.valueOf(bundle.getBundleId()));
+                "Provider of bundle based resources from bundle " + bundle.getBundleId());
         props.put(Constants.SERVICE_VENDOR, "The Apache Software Foundation");
         props.put(ResourceProvider.PROPERTY_ROOT, this.root.getResourceRoot());
         props.put(PROP_BUNDLE, bundle.getBundleId());
@@ -125,15 +125,13 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
 
             // here we either have a folder for which no same-named item exists
             // or a bundle file
-            if (entry != null) {
-                // check if a JSON props file is directly requested
-                // if so, we deny the access
-                if (this.root.getJSONPropertiesExtension() == null
-                        || !entryPath.endsWith(this.root.getJSONPropertiesExtension())) {
+            // check if a JSON props file is directly requested
+            // if so, we deny the access
+            if (entry != null
+                    && (this.root.getJSONPropertiesExtension() == null
+                            || !entryPath.endsWith(this.root.getJSONPropertiesExtension()))) {
 
-                    return new BundleResource(
-                            ctx.getResourceResolver(), cache, mappedPath, resourcePath, null, isFolder);
-                }
+                return new BundleResource(ctx.getResourceResolver(), cache, mappedPath, resourcePath, null, isFolder);
             }
 
             // the bundle does not contain the path
@@ -162,7 +160,7 @@ public class BundleResourceProvider extends ResourceProvider<Object> {
 
     @Override
     public Iterator<Resource> listChildren(final ResolveContext<Object> ctx, final Resource parent) {
-        if (parent instanceof BundleResource && ((BundleResource) parent).getBundle() == this.cache) {
+        if (parent instanceof BundleResource br && br.getBundle() == this.cache) {
             // bundle resources can handle this request directly when the parent
             // resource is in the same bundle as this provider.
             return new BundleResourceIterator((BundleResource) parent);

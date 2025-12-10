@@ -39,7 +39,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BundleResourceTest {
+class BundleResourceTest {
 
     BundleResourceCache getBundleResourceCache() {
         Bundle bundle = mock(Bundle.class);
@@ -52,12 +52,12 @@ public class BundleResourceTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ResourceURLStreamHandlerFactory.init();
     }
 
     @AfterEach
-    public void finish() {
+    void finish() {
         ResourceURLStreamHandler.reset();
     }
 
@@ -76,7 +76,7 @@ public class BundleResourceTest {
     }
 
     @Test
-    public void testFileResource() throws MalformedURLException {
+    void testFileResource() throws MalformedURLException {
         final BundleResourceCache cache = getBundleResourceCache();
         when(cache.getEntry("/libs/foo/test.json")).thenReturn(new URL("file:/libs/foo/test.json"));
         final BundleResource rsrc = new BundleResource(
@@ -88,7 +88,7 @@ public class BundleResourceTest {
     }
 
     @Test
-    public void testJSONResource() throws IOException {
+    void testJSONResource() throws IOException {
         final BundleResourceCache cache = getBundleResourceCache();
         addContent(cache, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
         final BundleResource rsrc = new BundleResource(
@@ -105,7 +105,7 @@ public class BundleResourceTest {
      *  JSONPropertiesExtension is loaded
      */
     @Test
-    public void testJSONResourceForMappedFile() throws IOException {
+    void testJSONResourceForMappedFile() throws IOException {
         final BundleResourceCache cache = getBundleResourceCache();
         addContent(cache, "/SLING_INF/libs/foo/test.txt", "Hello Text");
         addContent(cache, "/SLING-INF/libs/foo/test.txt.json", Collections.singletonMap("test", (Object) "foo"));

@@ -23,10 +23,10 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class PathMappingTest {
+class PathMappingTest {
 
     @Test
-    public void testSimpleRoot() {
+    void testSimpleRoot() {
         final PathMapping[] paths = PathMapping.getRoots("/libs/foo");
         assertEquals(1, paths.length);
         assertNull(paths[0].getEntryRoot());
@@ -37,7 +37,7 @@ public class PathMappingTest {
     }
 
     @Test
-    public void testSimpleRootWithJSON() {
+    void testSimpleRootWithJSON() {
         final PathMapping[] paths = PathMapping.getRoots("/libs/foo;" + PathMapping.DIR_JSON + ":=json");
         assertEquals(1, paths.length);
         assertNull(paths[0].getEntryRoot());

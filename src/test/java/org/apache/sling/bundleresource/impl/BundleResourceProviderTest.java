@@ -45,7 +45,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class BundleResourceProviderTest {
+class BundleResourceProviderTest {
 
     Bundle getBundle() {
         Bundle bundle = mock(Bundle.class);
@@ -104,18 +104,18 @@ public class BundleResourceProviderTest {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         ResourceURLStreamHandlerFactory.init();
     }
 
     @AfterEach
-    public void finish() {
+    void finish() {
         ResourceURLStreamHandler.reset();
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testFileResource() throws IOException {
+    void testFileResource() throws IOException {
         final Bundle bundle = getBundle();
         addContent(bundle, "/libs/foo/test.json", "HELLOWORLD");
 
@@ -130,7 +130,7 @@ public class BundleResourceProviderTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testJSONResource() throws IOException {
+    void testJSONResource() throws IOException {
         final Bundle bundle = getBundle();
         addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
 
@@ -150,7 +150,7 @@ public class BundleResourceProviderTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testFileAndJSONResource() throws IOException {
+    void testFileAndJSONResource() throws IOException {
         final Bundle bundle = getBundle();
         addContent(bundle, "/libs/foo/test", "HELLOWORLD");
         addContent(bundle, "/libs/foo/test.json", Collections.singletonMap("test", (Object) "foo"));
@@ -171,7 +171,7 @@ public class BundleResourceProviderTest {
     }
 
     @Test
-    public void testTreeWithoutDeepJSON() throws IOException {
+    void testTreeWithoutDeepJSON() throws IOException {
         testTreeWithoutDeepJSON("");
         testTreeWithoutDeepJSON("/SLING-INF");
     }
@@ -194,7 +194,7 @@ public class BundleResourceProviderTest {
         finishContent(bundle);
 
         final PathMapping path;
-        if (prefix.length() == 0) {
+        if (prefix.isEmpty()) {
             path = new PathMapping("/libs/foo", null, "json");
         } else {
             path = new PathMapping("/libs/foo", prefix + "/libs/foo", "json");
@@ -230,7 +230,7 @@ public class BundleResourceProviderTest {
     }
 
     @Test
-    public void testTreeWithDeepJSON() throws IOException {
+    void testTreeWithDeepJSON() throws IOException {
         testTreeWithDeepJSON("");
         testTreeWithDeepJSON("/SLING-INF");
     }
@@ -292,7 +292,7 @@ public class BundleResourceProviderTest {
         finishContent(bundle);
 
         final PathMapping path;
-        if (prefix.length() == 0) {
+        if (prefix.isEmpty()) {
             path = new PathMapping("/libs/foo", null, "json");
         } else {
             path = new PathMapping("/libs/foo", prefix + "/libs/foo", "json");

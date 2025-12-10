@@ -66,6 +66,7 @@ public class BundleResourceURLConnection extends URLConnection {
     }
 
     /** Returns the input stream of the Bundle provided URLConnection */
+    @Override
     public InputStream getInputStream() throws IOException {
         connect();
 
@@ -73,6 +74,7 @@ public class BundleResourceURLConnection extends URLConnection {
     }
 
     /** Returns the content length of the Bundle provided URLConnection */
+    @Override
     public int getContentLength() {
         try {
             connect();
@@ -87,6 +89,7 @@ public class BundleResourceURLConnection extends URLConnection {
      * Returns the last modification time of the underlying bundle, which is the
      * last time the bundle was installed or updated
      */
+    @Override
     public long getLastModified() {
         try {
             connect();
@@ -98,6 +101,7 @@ public class BundleResourceURLConnection extends URLConnection {
     }
 
     /** Returns the content type of the Bundle provided URLConnection */
+    @Override
     public String getContentType() {
         try {
             connect();

@@ -83,67 +83,69 @@ class BundleResourceWebConsolePlugin extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest req, final HttpServletResponse res)
             throws ServletException, IOException {
-        PrintWriter pw = res.getWriter();
+        try (PrintWriter pw = res.getWriter()) {
+            pw.println("<table class='content' cellpadding='0' cellspacing='0' width='100%'>");
 
-        pw.println("<table class='content' cellpadding='0' cellspacing='0' width='100%'>");
+            pw.println("<tr class='content'>"); // NOSONAR
+            pw.println("<th colspan='2' class='content container'>Bundle Resource Provider</th>");
+            pw.println("</tr>"); // NOSONAR
 
-        pw.println("<tr class='content'>");
-        pw.println("<th colspan='2' class='content container'>Bundle Resource Provider</th>");
-        pw.println("</tr>");
+            BundleResourceProvider[] brp = provider.toArray(new BundleResourceProvider[provider.size()]);
+            for (BundleResourceProvider bundleResourceProvider : brp) {
 
-        BundleResourceProvider[] brp = provider.toArray(new BundleResourceProvider[provider.size()]);
-        for (BundleResourceProvider bundleResourceProvider : brp) {
+                BundleResourceCache cache = bundleResourceProvider.getBundleResourceCache();
+                PathMapping path = bundleResourceProvider.getMappedPath();
 
-            BundleResourceCache cache = bundleResourceProvider.getBundleResourceCache();
-            PathMapping path = bundleResourceProvider.getMappedPath();
+                pw.println("<tr class='content'>");
 
-            pw.println("<tr class='content'>");
+                pw.println("<td class='content'>"); // NOSONAR
+                pw.println(cache.getBundle().getBundleId());
+                pw.println("</td>"); // NOSONAR
 
-            pw.println("<td class='content'>");
-            pw.println(cache.getBundle().getBundleId());
-            pw.println("</td>");
+                pw.println("<td class='content'>");
+                pw.println(getName(cache.getBundle()));
+                pw.println("</td>");
 
-            pw.println("<td class='content'>");
-            pw.println(getName(cache.getBundle()));
-            pw.println("</td>");
+                pw.println("</tr>");
 
-            pw.println("</tr>");
+                pw.println("<tr class='content'>");
+                pw.println("<td class='content'>&nbsp;</td>");
 
-            pw.println("<tr class='content'>");
-            pw.println("<td class='content'>&nbsp;</td>");
+                pw.println("<td class='content'>");
 
-            pw.println("<td class='content'>");
+                pw.println("<table>");
 
-            pw.println("<table>");
+                pw.println("<tr>");
+                pw.println("<td>Mapping</td>");
+                pw.println("<td>");
+                pw.print(path.getResourceRoot());
+                if (path.getEntryRoot() != null) {
+                    pw.print(" ==> ");
+                    pw.print(path.getEntryRoot());
+                }
+                pw.println("</td>");
+                pw.println("</tr>");
 
-            pw.println("<tr>");
-            pw.println("<td>Mapping</td>");
-            pw.println("<td>");
-            pw.print(path.getResourceRoot());
-            if (path.getEntryRoot() != null) {
-                pw.print(" ==> ");
-                pw.print(path.getEntryRoot());
+                pw.println("<tr>");
+                pw.println("<td>Entry Cache</td>");
+                pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getEntryCacheSize(), cache.getEntryCacheMaxSize());
+                pw.println("</tr>");
+
+                pw.println("<tr>");
+                pw.println("<td>List Cache</td>");
+                pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getListCacheSize(), cache.getListCacheMaxSize());
+                pw.println("</tr>");
+
+                pw.println("</table>");
+
+                pw.println("</td>");
+                pw.println("</tr>");
             }
-            pw.println("</td>");
-            pw.println("</tr>");
-
-            pw.println("<tr>");
-            pw.println("<td>Entry Cache</td>");
-            pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getEntryCacheSize(), cache.getEntryCacheMaxSize());
-            pw.println("</tr>");
-
-            pw.println("<tr>");
-            pw.println("<td>List Cache</td>");
-            pw.printf("<td>Size: %d, Limit: %d</td>%n", cache.getListCacheSize(), cache.getListCacheMaxSize());
-            pw.println("</tr>");
 
             pw.println("</table>");
-
-            pw.println("</td>");
-            pw.println("</tr>");
+        } catch (IOException ioe) {
+            log("Failed to write response: " + ioe.getMessage(), ioe);
         }
-
-        pw.println("</table>");
     }
 
     @SuppressWarnings("rawtypes")
