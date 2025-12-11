@@ -32,6 +32,7 @@ import jakarta.json.Json;
 import jakarta.json.JsonArray;
 import jakarta.json.JsonNumber;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
 import jakarta.json.JsonString;
 import jakarta.json.JsonValue;
 import org.apache.sling.api.resource.AbstractResource;
@@ -141,10 +142,12 @@ public class BundleResource extends AbstractResource {
                 try {
                     final URL url = this.cache.getEntry(propsPath);
                     if (url != null) {
-                        final JsonObject obj =
-                                Json.createReader(url.openStream()).readObject();
+                        final JsonObject obj;
+                        try (JsonReader reader = Json.createReader(url.openStream())) {
+                            obj = reader.readObject();
+                        }
                         for (final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
-                            final Object value = getValue(entry.getValue(), true);
+                            final Object value = getValue(entry.getValue());
                             if (value != null) {
                                 if (value instanceof Map) {
                                     if (children == null) {
@@ -184,17 +187,18 @@ public class BundleResource extends AbstractResource {
                     resources = ((BundleResource) result).subResources;
                 } else {
                     result = null;
-                    break;
                 }
             } else {
                 result = null;
+            }
+            if (result == null) {
                 break;
             }
         }
         return result;
     }
 
-    private static Object getValue(final JsonValue value, final boolean topLevel) {
+    private static Object getValue(final JsonValue value) {
         switch (value.getValueType()) {
             // type NULL -> return null
             case NULL:
@@ -218,7 +222,7 @@ public class BundleResource extends AbstractResource {
             case ARRAY:
                 final List<Object> array = new ArrayList<>();
                 for (final JsonValue x : ((JsonArray) value)) {
-                    array.add(getValue(x, false));
+                    array.add(getValue(x));
                 }
                 return array;
             // type OBJECT -> return map
@@ -226,7 +230,7 @@ public class BundleResource extends AbstractResource {
                 final Map<String, Object> map = new HashMap<>();
                 final JsonObject obj = (JsonObject) value;
                 for (final Map.Entry<String, JsonValue> entry : obj.entrySet()) {
-                    map.put(entry.getKey(), getValue(entry.getValue(), false));
+                    map.put(entry.getKey(), getValue(entry.getValue()));
                 }
                 return map;
         }
@@ -264,13 +268,13 @@ public class BundleResource extends AbstractResource {
 
     @Override
     @SuppressWarnings("unchecked")
-    public <Type> Type adaptTo(Class<Type> type) {
+    public <T> T adaptTo(Class<T> type) {
         if (type == InputStream.class) {
-            return (Type) getInputStream(); // unchecked cast
+            return (T) getInputStream(); // unchecked cast
         } else if (type == URL.class) {
-            return (Type) getURL(); // unchecked cast
+            return (T) getURL(); // unchecked cast
         } else if (type == ValueMap.class) {
-            return (Type) valueMap; // unchecked cast
+            return (T) valueMap; // unchecked cast
         }
 
         // fall back to adapter factories
