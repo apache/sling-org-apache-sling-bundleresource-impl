@@ -18,6 +18,7 @@
  */
 package org.apache.sling.bundleresource.impl;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -43,6 +44,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -58,6 +60,24 @@ import static org.mockito.Mockito.when;
  * - Calls destroyPlugin() and verifies the ServiceRegistration.unregister() was invoked.
  */
 class BundleResourceWebConsolePluginTest {
+
+    @Test
+    void testDoGetWithCaughtIOException() throws Exception {
+        testPlugin((ctx, reg, plugin) -> {
+            plugin = Mockito.spy(plugin);
+            Mockito.doNothing().when(plugin).log(anyString(), any(Exception.class));
+
+            // Prepare mocks for servlet invocation and capture output
+            HttpServletRequest req = mock(HttpServletRequest.class);
+            HttpServletResponse resp = mock(HttpServletResponse.class);
+            Mockito.doThrow(IOException.class).when(resp).getWriter();
+
+            plugin.doGet(req, resp);
+
+            // verify the error log message was invoked
+            verify(plugin, times(1)).log(anyString(), any(Exception.class));
+        });
+    }
 
     @Test
     void testActivateDoGetDeactivate() throws Exception {
