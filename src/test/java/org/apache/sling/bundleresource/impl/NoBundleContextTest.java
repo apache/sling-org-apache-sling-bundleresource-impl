@@ -18,7 +18,6 @@
  */
 package org.apache.sling.bundleresource.impl;
 
-import java.io.IOException;
 import java.util.Dictionary;
 
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -38,24 +37,22 @@ import static org.mockito.Mockito.when;
 /**
  * SLING-11649 - verify check for null BundleContext while registering bundle resources
  */
-public class NoBundleContextTest {
+class NoBundleContextTest {
 
     @Test
-    public void verifyIllegalStateExceptionWhenNoBundleContextIsAvailable() throws IOException {
+    void verifyIllegalStateExceptionWhenNoBundleContextIsAvailable() {
         final Bundle bundle = mock(Bundle.class);
         when(bundle.getBundleContext()).thenReturn(null);
         final PathMapping path = new PathMapping("/libs/foo", null, null);
 
         final BundleResourceProvider provider = new BundleResourceProvider(new BundleResourceCache(bundle), path);
-        Exception exception = assertThrows(IllegalStateException.class, () -> {
-            provider.registerService();
-        });
+        Exception exception = assertThrows(IllegalStateException.class, provider::registerService);
         assertTrue(exception.getMessage().contains("No BundleContext was found"));
     }
 
     @SuppressWarnings("unchecked")
     @Test
-    public void verifyNoIllegalStateExceptionWhenBundleContextIsAvailable() throws IOException {
+    void verifyNoIllegalStateExceptionWhenBundleContextIsAvailable() {
         final Bundle bundle = mock(Bundle.class);
         final BundleContext bc = mock(BundleContext.class);
         when(bundle.getBundleContext()).thenReturn(bc);

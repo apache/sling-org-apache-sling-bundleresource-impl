@@ -225,7 +225,7 @@ class BundleResourceCache {
      * {@link #removeEldestEntry(Entry)} method to implement the size limit,
      * which is set in the constructor.
      */
-    private static class BundleResourceMap<K, V> extends LinkedHashMap<String, V> {
+    private static class BundleResourceMap<K, V> extends LinkedHashMap<K, V> {
 
         private static final long serialVersionUID = 7455098291380945276L;
 
@@ -251,7 +251,7 @@ class BundleResourceCache {
             // we need the access-order to implement the LRU mechanism
             super(8, 0.75f, true);
 
-            // normalize size to a possitive number
+            // normalize size to a positive number
             if (limit <= 0) {
                 limit = DEFAULT_LIMIT;
             }
@@ -264,8 +264,26 @@ class BundleResourceCache {
          * map exceeds the configured limit.
          */
         @Override
-        protected boolean removeEldestEntry(Entry<String, V> eldest) {
+        protected boolean removeEldestEntry(Entry<K, V> eldest) {
             return size() > limit;
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = super.hashCode();
+            result = prime * result + limit;
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) return true;
+            if (!super.equals(obj)) return false;
+            if (getClass() != obj.getClass()) return false;
+            @SuppressWarnings("rawtypes")
+            BundleResourceMap other = (BundleResourceMap) obj;
+            return limit == other.limit;
         }
     }
 }
