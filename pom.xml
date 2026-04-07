@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling-bundle-parent</artifactId>
-        <version>64</version>
+        <version>66</version>
         <relativePath />
     </parent>
 
@@ -113,7 +113,6 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>5.20.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
