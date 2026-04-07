@@ -27,7 +27,7 @@
     </parent>
 
     <artifactId>org.apache.sling.bundleresource.impl</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
 
     <name>Apache Sling Bundle Resource Provider</name>
     <description>Provides a ResourceProvider implementation supporting bundle
@@ -36,13 +36,13 @@
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-bundleresource-impl.git</developerConnection>
-        <tag>org.apache.sling.bundleresource.impl-3.0.0</tag>
+        <tag>HEAD</tag>
         <url>https://github.com/apache/sling-org-apache-sling-bundleresource-impl.git</url>
     </scm>
 
     <properties>
         <sling.java.version>17</sling.java.version>
-        <project.build.outputTimestamp>2026-04-07T23:39:03Z</project.build.outputTimestamp>
+        <project.build.outputTimestamp>2026-04-07T23:39:34Z</project.build.outputTimestamp>
     </properties>
     <dependencies>
         <dependency>
